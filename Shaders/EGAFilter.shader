@@ -25,41 +25,98 @@ Shader "Hidden/EGAFilter" {
 	// 1.0 is the 'proper' value, 1.2 seems to give better results but brighter
 	// colors may clip.
 	float color_enhance = 1.2;
+	float width;
+	float height;
+	
+	//magic numbers from Bayer
+	half genDither(int x, int y)
+	{
+		half4x4 dither = half4x4(
+				 1.0, 33.0,  9.0, 41.0,
+				49.0, 17.0, 57.0, 25.0,
+				13.0, 45.0,  5.0, 37.0,
+				61.0, 29.0, 53.0, 21.0 );
 
-	// Color lookup table (RGBI palette with brown fix)
-	const half3 rgbi_palette[16] = {
-	  half3(0.0,     0.0,     0.0),
-	  half3(0.0,     0.0,     0.66667),
-	  half3(0.0,     0.66667, 0.0),
-	  half3(0.0,     0.66667, 0.66667),
-	  half3(0.66667, 0.0,     0.0),
-	  half3(0.66667, 0.0,     0.66667),
-	  half3(0.66667, 0.33333, 0.0),
-	  half3(0.66667, 0.66667, 0.66667),
-	  half3(0.33333, 0.33333, 0.33333),
-	  half3(0.33333, 0.33333, 1.0),
-	  half3(0.33333, 1.0,     0.33333),
-	  half3(0.33333, 1.0,     1.0),
-	  half3(1.0,     0.33333, 0.33333),
-	  half3(1.0,     0.33333, 1.0),
-	  half3(1.0,     1.0,     0.33333),
-	  half3(1.0,     1.0,     1.0)
-	};
-
-	// Compare vector distances and return nearest RGBI color
-	half3 nearest_rgbi (half3 original) {
-	  half dst;
-	  half min_dst = 2.0;
-	  
-	  half3 ret;
-
-	  for (int i=0; i<16; i++) {
-		dst = distance(original, rgbi_palette[i]);
-		if (dst < min_dst) {
-		  min_dst = dst;
-		  ret = rgbi_palette[i];
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 4; j++) {
+				if(i == x && j == y) {
+					return (dither[i][j])/64.0;
+				}
+			}
 		}
-	  }
+		return 0.0;
+	}
+
+	float dist_sq(half3 a, half3 b) {
+		half3 delta = a - b;
+		return dot(delta, delta);
+	}
+	
+	// Compare vector distances and return nearest RGBI color
+	// fuck cg shader coding
+	half3 nearest_rgbi (half3 original) {
+	  half min_dst = 4.0;	  
+	  half3 ret = half3(1,1,1);
+	  
+	  half3 pal = half3(0.0,     0.0,     0.0);
+	  half dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.0,     0.0,     0.66667);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.0,     0.66667, 0.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.0,     0.66667, 0.66667);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.66667, 0.0,     0.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.66667, 0.0,     0.66667);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.66667, 0.33333, 0.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.66667, 0.66667, 0.66667);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.33333, 0.33333, 0.33333);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.33333, 0.33333, 1.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.33333, 1.0,     0.33333);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(0.33333, 1.0,     1.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(1.0,     0.33333, 0.33333);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(1.0,     0.33333, 1.0);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
+	  
+	  pal = half3(1.0,     1.0,     0.33333);
+	  dst = dist_sq(original, pal);
+	  if(dst < min_dst) { min_dst = dst; ret = pal; }
 	  
 	  return ret;
 	}
@@ -75,7 +132,21 @@ Shader "Hidden/EGAFilter" {
 	half4 frag(v2f i) : COLOR 
 	{
 		half3 fragcolor = tex2D(_MainTex, i.uv).rgb;
-		return half4(nearest_rgbi(fragcolor*color_enhance), 1);
+		
+		int x = (int)fmod(i.uv.x * width, 4);
+		int y = (int)fmod(i.uv.y * height, 4);
+		
+		half dither = genDither(x, y);
+		
+		fragcolor.r = (fragcolor.r + dither)*color_enhance;
+		fragcolor.g = (fragcolor.g + dither)*color_enhance;
+		fragcolor.b = (fragcolor.b + dither)*color_enhance;
+		
+		/*fragcolor.r = clamp(fragcolor.r + dither, 0, 1);
+		fragcolor.g = clamp(fragcolor.g + dither, 0, 1);
+		fragcolor.b = clamp(fragcolor.b + dither, 0, 1);*/
+		
+		return half4(nearest_rgbi(fragcolor), 1);
 	}
 
 	ENDCG 

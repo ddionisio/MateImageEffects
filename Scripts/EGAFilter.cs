@@ -8,6 +8,8 @@ namespace M8.ImageEffects {
     public class EGAFilter : PostEffectsBase {
         public Shader shader;
 
+        public float colorEnhance = 1.2f;
+
         private Material mMat;
 
         public override bool CheckResources() {
@@ -25,6 +27,10 @@ namespace M8.ImageEffects {
                 Graphics.Blit(src, dest);
                 return;
             }
+
+            mMat.SetFloat("color_enhance", colorEnhance);
+            mMat.SetFloat("width", src.width);
+            mMat.SetFloat("height", src.height);
 
             Graphics.Blit(src, dest, mMat);
         }

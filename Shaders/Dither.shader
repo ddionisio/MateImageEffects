@@ -1,7 +1,8 @@
-//Bayer Ordered Ultimate Hadoken dithering
+//TODO: figure out luminance image so it's only one value
 Shader "Hidden/Dither" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
+		_DitherTex("Base (RGB)", 2D) = "" {}
 	}
 	// Shader code pasted into all further CGPROGRAM blocks
 	CGINCLUDE
@@ -14,6 +15,14 @@ Shader "Hidden/Dither" {
 	};
 	
 	sampler2D _MainTex;
+	sampler2D _DitherTex;
+
+	int levels = 64;
+	
+	//float strength; //make sure it is in uniform value [0, 1]
+	int strength = 50;
+	float ditherSizeW = 1.0; //make sure it is in uniform value [0, 1] based in screen size: e.g. [16/1280, 16/720]
+	float ditherSizeH = 1.0;
 
 	v2f vert( appdata_img v ) 
 	{
@@ -23,44 +32,25 @@ Shader "Hidden/Dither" {
 		return o;
 	}
 
-	half nearest(int x, int y, half color) {
-		half4x4 dither = {{1.0, 33.0, 9.0, 41.0},
-						  {49.0, 17.0, 57.0, 25.0},
-						  {13.0, 45.0, 5.0, 37.0},
-						  {61.0, 29.0, 53.0, 21.0}};
+	int ditherValue(float2 loc) {
+		int v = tex2D(_DitherTex, fmod(loc, float2(ditherSizeW, ditherSizeH))).r*255.0;
+		return (v*strength + 127) / 255;
+	}
 
-		half limit = 0.0;
+	half doIt(half clr, int dither) {
+		int c = (clr*255.0) + dither;
 
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				if(x == i && y == j) {
-					limit = (dither[i][j]+1.0)/64.0;
-					break;
-				}
-			}
-		}
+		c = (((c * levels + 127) / 255) * 255 + levels / 2) / levels;
 
-		/*if(color < limit) {
-			limit = 0.0;
-		}
-		else {
-			limit = 1.0;
-		}*/
-
-		return color + limit;
+		return c / 255.0;
 	}
 
 	half4 frag(v2f i) : COLOR 
 	{
 		half4 color = tex2D(_MainTex, i.uv);
+		int ditherVal = ditherValue(i.uv);
 
-		int x = (int)fmod(i.uv.x, 4.0);
-		int y = (int)fmod(i.uv.y, 4.0);
-		
-		return half4(
-			nearest(x, y, color.r), 
-			nearest(x, y, color.g), 
-			nearest(x, y, color.b), 1.0);
+		return half4(clamp(doIt(color.r, ditherVal), 0.0, 1.0), clamp(doIt(color.g, ditherVal), 0.0, 1.0), clamp(doIt(color.b, ditherVal), 0.0, 1.0), 1.0);
 	}
 
 	ENDCG 
