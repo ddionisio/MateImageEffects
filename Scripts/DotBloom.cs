@@ -8,6 +8,11 @@ namespace M8.ImageEffects {
     public class DotBloom : PostEffectsBase {
         public Shader shader;
 
+        public float gamma = 2.4f;
+        public float shine = 0.05f;
+        public float blend = 0.65f;
+        public float resolution = 0.3f;
+
         private Material mMat;
 
         public override bool CheckResources() {
@@ -26,7 +31,24 @@ namespace M8.ImageEffects {
                 return;
             }
 
+            mMat.SetFloat("gamma", gamma);
+            mMat.SetFloat("shine", shine);
+            mMat.SetFloat("blend", blend);
+
+            mMat.SetFloat("srcW", src.width / resolution);
+            mMat.SetFloat("srcH", src.height / resolution);
+
             Graphics.Blit(src, dest, mMat);
+        }
+
+        private void DownSample4x(RenderTexture source, RenderTexture dest) {
+            float off = 1.0f;
+            Graphics.BlitMultiTap(source, dest, mMat,
+                new Vector2(-off, -off),
+                new Vector2(-off, off),
+                new Vector2(off, off),
+                new Vector2(off, -off)
+            );
         }
     }
 }

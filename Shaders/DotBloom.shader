@@ -27,6 +27,8 @@ Shader "Hidden/DotBloom" {
 	float gamma = 2.4;
 	float shine = 0.05;
 	float blend = 0.65;
+	float srcW = 1.0;
+	float srcH = 1.0;
 
 	float dist(float2 coord, float2 source)
     {
@@ -55,8 +57,8 @@ Shader "Hidden/DotBloom" {
 		v2f o;
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = v.texcoord.xy;
-		o.pixel_no = v.texcoord * _ScreenParams.xy;
-		o.pixel_s = float2(1.0/_ScreenParams.x, 1.0/_ScreenParams.y);
+		o.pixel_no = v.texcoord * float2(srcW, srcH);
+		o.pixel_s = float2(1.0/srcW, 1.0/srcH);
 		return o;
 	} 
 	
