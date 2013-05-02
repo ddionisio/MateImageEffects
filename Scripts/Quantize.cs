@@ -7,6 +7,7 @@ namespace M8.ImageEffects {
     [AddComponentMenu("M8/Image Effects/Quantize")]
     public class Quantize : PostEffectsBase {
         public int levels = 16;
+        public bool dithered = false;
 
         public Shader shader;
 
@@ -30,7 +31,19 @@ namespace M8.ImageEffects {
 
             mMat.SetFloat("levels", levels);
 
-            Graphics.Blit(src, dest, mMat);
+            int pass;
+
+            if(dithered) {
+                mMat.SetFloat("width", src.width);
+                mMat.SetFloat("height", src.height);
+
+                pass = 1;
+            }
+            else {
+                pass = 0;
+            }
+
+            Graphics.Blit(src, dest, mMat, pass);
         }
     }
 }

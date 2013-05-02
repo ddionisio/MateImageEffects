@@ -32,15 +32,15 @@ Shader "Hidden/EGAFilter" {
 	half genDither(int x, int y)
 	{
 		half4x4 dither = half4x4(
-				 1.0, 33.0,  9.0, 41.0,
-				49.0, 17.0, 57.0, 25.0,
-				13.0, 45.0,  5.0, 37.0,
-				61.0, 29.0, 53.0, 21.0 );
+				 1.0, 9.0,  3.0, 11.0,
+				13.0, 5.0, 15.0, 7.0,
+				4.0, 12.0,  2.0, 10.0,
+				16.0, 8.0, 14.0, 6.0 );
 
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
 				if(i == x && j == y) {
-					return (dither[i][j])/64.0;
+					return (dither[i][j])/17.0;
 				}
 			}
 		}
