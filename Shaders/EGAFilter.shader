@@ -14,6 +14,7 @@ Shader "Hidden/EGAFilter" {
 	CGINCLUDE
 	
 	#include "UnityCG.cginc"
+	#include "Dither.cginc"
 	
 	struct v2f {
 		float4 pos : POSITION;
@@ -21,31 +22,10 @@ Shader "Hidden/EGAFilter" {
 	};
 	
 	sampler2D _MainTex;
-	
+
 	// 1.0 is the 'proper' value, 1.2 seems to give better results but brighter
 	// colors may clip.
 	float color_enhance = 1.2;
-	float width;
-	float height;
-	
-	//magic numbers from Bayer
-	half genDither(int x, int y)
-	{
-		half4x4 dither = half4x4(
-				 1.0, 9.0,  3.0, 11.0,
-				13.0, 5.0, 15.0, 7.0,
-				4.0, 12.0,  2.0, 10.0,
-				16.0, 8.0, 14.0, 6.0 );
-
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				if(i == x && j == y) {
-					return (dither[i][j])/17.0;
-				}
-			}
-		}
-		return 0.0;
-	}
 
 	float dist_sq(half3 a, half3 b) {
 		half3 delta = a - b;
@@ -133,10 +113,7 @@ Shader "Hidden/EGAFilter" {
 	{
 		half3 fragcolor = tex2D(_MainTex, i.uv).rgb;
 		
-		int x = (int)fmod(i.uv.x * width, 4);
-		int y = (int)fmod(i.uv.y * height, 4);
-		
-		half dither = genDither(x, y);
+		half dither = genDither(i.uv);
 		
 		fragcolor.r = (fragcolor.r + dither)*color_enhance;
 		fragcolor.g = (fragcolor.g + dither)*color_enhance;

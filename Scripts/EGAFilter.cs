@@ -8,7 +8,10 @@ namespace M8.ImageEffects {
     public class EGAFilter : PostEffectsBase {
         public Shader shader;
 
+        public Texture2D dither;
+
         public float colorEnhance = 1.2f;
+        public float ditherMaxThreshold = 1.0f;
 
         private Material mMat;
 
@@ -23,14 +26,18 @@ namespace M8.ImageEffects {
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest) {
-            if(!CheckResources()) {
+            if(!CheckResources() || dither == null) {
                 Graphics.Blit(src, dest);
                 return;
             }
 
+            mMat.SetTexture("_DitherTex", dither);
+            mMat.SetFloat("ditherStepX", ((float)src.width) / dither.width);
+            mMat.SetFloat("ditherStepY", ((float)src.height) / dither.height);
+
+            mMat.SetFloat("ditherMaxThreshold", 255.0f / ditherMaxThreshold);
+
             mMat.SetFloat("color_enhance", colorEnhance);
-            mMat.SetFloat("width", src.width);
-            mMat.SetFloat("height", src.height);
 
             Graphics.Blit(src, dest, mMat);
         }
