@@ -6,6 +6,7 @@ Shader "Hidden/Quantize" {
 	CGINCLUDE
 	
 	#include "UnityCG.cginc"
+	#include "Dither.cginc"
 	
 	struct v2f {
 		float4 pos : POSITION;
@@ -15,10 +16,7 @@ Shader "Hidden/Quantize" {
 	sampler2D _MainTex;
 	
 	int levels = 16;
-
-	float width;
-	float height;
-
+	
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
@@ -27,25 +25,6 @@ Shader "Hidden/Quantize" {
 		return o;
 	}
 
-	//magic numbers from Bayer
-	half genDither(int x, int y)
-	{
-		half4x4 dither = half4x4(
-				 1.0, 9.0,  3.0, 11.0,
-				13.0, 5.0, 15.0, 7.0,
-				4.0, 12.0,  2.0, 10.0,
-				16.0, 8.0, 14.0, 6.0 );
-
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				if(i == x && j == y) {
-					return (dither[i][j])/17.0;
-				}
-			}
-		}
-		return 0.0;
-	}
-	
 	half quantize(half c)
 	{
 		int val = c*255.0;
@@ -64,11 +43,7 @@ Shader "Hidden/Quantize" {
 	{
 		half3 color = tex2D(_MainTex, i.uv);
 
-		int x = (int)fmod(i.uv.x * width, 4);
-		int y = (int)fmod(i.uv.y * height, 4);
-		
-				
-		half dither = genDither(x, y);
+		half dither = genDither(i.uv);
 
 		return half4(quantize(color.r + dither), quantize(color.g + dither), quantize(color.b + dither), 1);
 	}

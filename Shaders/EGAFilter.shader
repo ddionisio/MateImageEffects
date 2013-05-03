@@ -113,11 +113,14 @@ Shader "Hidden/EGAFilter" {
 	{
 		half3 fragcolor = tex2D(_MainTex, i.uv).rgb;
 		
+		return half4(nearest_rgbi(fragcolor*color_enhance), 1);
+	}
+
+	half4 frag_dither(v2f i) : COLOR 
+	{
 		half dither = genDither(i.uv);
-		
-		fragcolor.r = (fragcolor.r + dither)*color_enhance;
-		fragcolor.g = (fragcolor.g + dither)*color_enhance;
-		fragcolor.b = (fragcolor.b + dither)*color_enhance;
+
+		half3 fragcolor = tex2D(_MainTex, i.uv).rgb*color_enhance + dither.xxx;
 		
 		/*fragcolor.r = clamp(fragcolor.r + dither, 0, 1);
 		fragcolor.g = clamp(fragcolor.g + dither, 0, 1);
@@ -140,7 +143,18 @@ Subshader {
       #pragma fragment frag
       ENDCG
   }
-  
+
+  Pass {
+	  ZTest Always Cull Off ZWrite Off
+	  Fog { Mode off }      
+
+      CGPROGRAM
+	  #pragma target 3.0
+      #pragma fragmentoption ARB_precision_hint_fastest 
+      #pragma vertex vert
+      #pragma fragment frag_dither
+      ENDCG
+  }
 }
 
 Fallback off
