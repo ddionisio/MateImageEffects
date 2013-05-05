@@ -2,7 +2,9 @@ fileFormatVersion: 2
 guid: dc9c80b7c01648d49a556a08902a8d65
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - shader: {fileID: 4800000, guid: 4f8085b1e1514164c915326d85341357, type: 3}
+  - dither: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
