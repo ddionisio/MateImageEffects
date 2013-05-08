@@ -10,6 +10,8 @@ namespace M8.ImageEffects {
 
         public override void OnInspectorGUI() {
 
+            GUI.changed = false;
+
             base.OnInspectorGUI();
 
             M8.Editor.Utility.DrawSeparator();
@@ -26,6 +28,9 @@ namespace M8.ImageEffects {
                     data.palettes[i] = EditorGUILayout.ColorField(i.ToString(), data.palettes[i]);
                 }
             }
+
+            if(GUI.changed)
+                EditorUtility.SetDirty(target);
         }
     }
 }

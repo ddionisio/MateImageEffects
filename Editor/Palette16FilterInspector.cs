@@ -9,6 +9,8 @@ namespace M8.ImageEffects {
         private bool mShow = false;
 
         public override void OnInspectorGUI() {
+
+            GUI.changed = false;
                         
             base.OnInspectorGUI();
 
@@ -26,6 +28,9 @@ namespace M8.ImageEffects {
                     data.palettes[i] = EditorGUILayout.ColorField(i.ToString(), data.palettes[i]);
                 }
             }
+
+            if(GUI.changed)
+                EditorUtility.SetDirty(target);
         }
     }
 }
