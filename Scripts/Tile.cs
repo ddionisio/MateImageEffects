@@ -12,6 +12,34 @@ namespace M8.ImageEffects {
 
         private Material mMat;
 
+        /// <summary>
+        /// Use with a coroutine
+        /// </summary>
+        public IEnumerator DoTilePulse(float minTile, float delay) {
+            if(delay > 0.0f) {
+                enabled = true;
+
+                float curTime = 0.0f;
+                float maxTile = Screen.height;
+                WaitForFixedUpdate waitUpdate = new WaitForFixedUpdate();
+
+                while(curTime < delay) {
+                    curTime += Time.fixedDeltaTime;
+
+                    float t = Mathf.Sin(Mathf.PI * (curTime / delay));
+                    t *= t;
+
+                    numTiles = maxTile + t * (minTile - maxTile);
+
+                    yield return waitUpdate;
+                }
+
+                enabled = false;
+            }
+
+            yield break;
+        }
+
         public override bool CheckResources() {
             CheckSupport(false);
             mMat = CheckShaderAndCreateMaterial(shader, mMat);
