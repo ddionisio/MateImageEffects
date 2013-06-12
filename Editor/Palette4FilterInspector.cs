@@ -14,7 +14,7 @@ namespace M8.ImageEffects {
 
             base.OnInspectorGUI();
 
-            M8.Editor.Utility.DrawSeparator();
+            //M8.Editor.Utility.DrawSeparator();
 
             mShow = EditorGUILayout.Foldout(mShow, "Palettes");
 
