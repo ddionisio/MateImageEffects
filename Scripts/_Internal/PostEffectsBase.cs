@@ -7,6 +7,7 @@ using System.Collections;
 namespace M8.ImageEffects {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
+    [AddComponentMenu("")]
     public class PostEffectsBase : MonoBehaviour {
         protected bool supportHDRTextures = true;
         protected bool supportDX11 = false;
