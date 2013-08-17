@@ -8,11 +8,17 @@ namespace M8.ImageEffects {
     public class CMYKHalftone : PostEffectsBase {
         public Shader shader;
 
-        public float frequency = 40.0f;
-        public Vector4 rot = new Vector4(15, 75, 0, 45);
+        [SerializeField]
+        float frequency = 40.0f;
 
-        public float uScale = 1.0f;
-        public float uYrot = 45.0f;
+        [SerializeField]
+        Vector4 rot = new Vector4(15, 75, 0, 45);
+
+        [SerializeField]
+        float uScale = 1.0f;
+
+        [SerializeField]
+        float uYrot = 45.0f;
 
         private Material mMat;
 
@@ -22,25 +28,31 @@ namespace M8.ImageEffects {
 
             if(!isSupported)
                 ReportAutoDisable();
+            else {
+                mMat.SetFloat("frequency", frequency);
+                mMat.SetVector("rot", new Vector4(rot.x * Mathf.Deg2Rad, rot.y * Mathf.Deg2Rad, rot.z * Mathf.Deg2Rad, rot.w * Mathf.Deg2Rad));
+
+                mMat.SetFloat("uScale", uScale);
+                mMat.SetFloat("uYrot", uYrot * Mathf.Deg2Rad);
+            }
 
             return isSupported;
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest) {
+#if UNITY_EDITOR
             if(!CheckResources()) {
                 Graphics.Blit(src, dest);
                 return;
             }
-
-            mMat.SetFloat("frequency", frequency);
-            mMat.SetVector("rot", new Vector4(rot.x * Mathf.Deg2Rad, rot.y * Mathf.Deg2Rad, rot.z * Mathf.Deg2Rad, rot.w * Mathf.Deg2Rad));
-
-            mMat.SetFloat("uScale", uScale);
-            mMat.SetFloat("uYrot", uYrot * Mathf.Deg2Rad);
-
-            mMat.SetFloat("srcW", src.width);
-            mMat.SetFloat("srcH", src.height);
-
+#else
+            if(!isSupported) {
+                Graphics.Blit(src, dest);
+                    return;
+            }
+#endif
+            mMat.SetVector("srcSize", new Vector4(src.width, src.height, 1.0f / src.width, 1.0f / src.height));
+            
             Graphics.Blit(src, dest, mMat);
         }
     }

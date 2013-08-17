@@ -11,8 +11,5 @@ namespace M8.ImageEffects {
         protected override void OnInitResource() {
             mMat.SetFloat("color_enhance", colorEnhance);
         }
-
-        protected override void OnRender() {
-        }
     }
 }

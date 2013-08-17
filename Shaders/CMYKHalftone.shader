@@ -18,8 +18,7 @@
 	
 	float uScale;
 	float uYrot;
-	float srcW;
-	float srcH;
+	float4 srcSize; //(width,height,1/width,1/height)
 	
 	v2f vert( appdata_img v ) 
 	{
@@ -30,7 +29,6 @@
 	}
 	
 	float aastep(float threshold, float value) {
-		float frequency = 40.0;
 		float afwidth = frequency * (1.0/200.0) / uScale / cos(uYrot);
 		return smoothstep(threshold-afwidth, threshold+afwidth, value);
 	}
@@ -64,7 +62,7 @@
 	{
 		float2 st = i.uv;
 		
-		float3 texcolor = texture2D_bilinear(_MainTex, st, float2(srcW,srcH), float2(1.0/srcW,1.0/srcH)).xyz;
+		float3 texcolor = texture2D_bilinear(_MainTex, st, srcSize.xy, srcSize.zw).xyz;
 		
 		//TODO: noise
 		float n = 0;

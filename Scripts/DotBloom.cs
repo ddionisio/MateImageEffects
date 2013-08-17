@@ -11,16 +11,23 @@ namespace M8.ImageEffects {
         public float blend = 0.65f;
         public float tileScale = 1.0f;
 
+        public override bool CheckResources() {
+            bool ret = base.CheckResources();
+            if(ret) {
+                mMat.SetFloat("gamma", gamma);
+                mMat.SetFloat("shine", shine);
+                mMat.SetFloat("blend", blend);
+            }
 
-        protected override void DoRender(RenderTexture src, RenderTexture dest, Material mat) {
-            mat.SetFloat("gamma", gamma);
-            mat.SetFloat("shine", shine);
-            mat.SetFloat("blend", blend);
+            return ret;
+        }
 
-            mat.SetFloat("srcW", src.width * tileScale);
-            mat.SetFloat("srcH", src.height * tileScale);
 
-            Graphics.Blit(src, dest, mat);
+        protected override void DoRender(RenderTexture src, RenderTexture dest) {
+            float w = src.width * tileScale, h = src.height * tileScale;
+            mMat.SetVector("srcSize", new Vector4(w, h, 1.0f / w, 1.0f / h));
+
+            Graphics.Blit(src, dest, mMat);
         }
     }
 }

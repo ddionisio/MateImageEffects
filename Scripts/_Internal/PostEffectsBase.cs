@@ -13,6 +13,8 @@ namespace M8.ImageEffects {
         protected bool supportDX11 = false;
         protected bool isSupported = true;
 
+        private bool mStarted = false;
+
         public Material CheckShaderAndCreateMaterial(Shader s, Material m2Create) {
             if(s == null) {
                 Debug.Log("Missing shader in " + name);
@@ -199,10 +201,12 @@ namespace M8.ImageEffects {
         }
 
         void OnEnable() {
-            isSupported = true;
+            if(mStarted)
+                CheckResources();
         }
 
-        void Start() {
+        protected virtual void Start() {
+            mStarted = true;
             CheckResources();
         }
     }

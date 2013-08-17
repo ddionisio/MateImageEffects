@@ -45,8 +45,7 @@ Shader "Hidden/SketchHard" {
 	
 	sampler2D _MainTex;
 	
-	float psx = 1.0; //size of one texel width = 1.0/texture.width
-	float psy = 1.0; //size of one texel height = 1.0/texture.height
+	float2 ps; //size of one texel = (1.0/texture.width, 1.0/texture.height)
 	float3 pap = float3(0.82, 0.77, 0.61);
 	float3 ink = float3(0.28, 0.32, 0.32);
 	float threshold = 0.14; // effects drawing
@@ -55,8 +54,8 @@ Shader "Hidden/SketchHard" {
 	{
 		VERTEX_STUFF3 o;
 		
-		float dx = psx*0.5;
-	    float dy = psy*0.5;
+		float dx = ps.x*0.5;
+	    float dy = ps.y*0.5;
 		
 		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.C = v.texcoord.xy;

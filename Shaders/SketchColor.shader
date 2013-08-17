@@ -45,16 +45,15 @@ Shader "Hidden/SketchColor" {
 	
 	sampler2D _MainTex;
 	
-	float psx = 1.0; //size of one texel width = 1.0/texture.width
-	float psy = 1.0; //size of one texel height = 1.0/texture.height
+	float2 ps; //size of one texel = (1.0/texture.width, 1.0/texture.height)
 	half3 pap = half3(0.83, 0.79, 0.63);
 	
 	VERTEX_STUFF0 vert( appdata_img v ) 
 	{
 		VERTEX_STUFF0 o;
 		
-		float dx = psx*0.5;
-	    float dy = psy*0.5;
+		float dx = ps.x*0.5;
+	    float dy = ps.y*0.5;
 		
 		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.CT = v.texcoord.xy;

@@ -4,12 +4,21 @@ using System.Collections;
 namespace M8.ImageEffects {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("M8/Image Effects/SketchColor")]
-    public class SketchColor : PostEffectsBase {
+    [AddComponentMenu("M8/Image Effects/CMYKHalftone2")]
+    public class CMYKHalftone2 : PostEffectsBase {
         public Shader shader;
 
         [SerializeField]
-        Color paper = new Color(0.83f, 0.79f, 0.63f);
+        float dotSize = 1.48f;
+
+        [SerializeField]
+        float rotation = 0.0f;
+
+        [SerializeField]
+        float scale = 2.5f;
+
+        [SerializeField]
+        Vector4 cmykRotation = new Vector4(15, 75, 0, 45);
 
         private Material mMat;
 
@@ -20,7 +29,10 @@ namespace M8.ImageEffects {
             if(!isSupported)
                 ReportAutoDisable();
             else {
-                mMat.SetColor("pap", paper);
+                mMat.SetFloat("dotSize", dotSize);
+                mMat.SetFloat("_s", scale);
+                mMat.SetFloat("_r", rotation * Mathf.Deg2Rad);
+                mMat.SetVector("_clrR", cmykRotation * Mathf.Deg2Rad);
             }
 
             return isSupported;
@@ -35,8 +47,6 @@ namespace M8.ImageEffects {
                 return;
             }
 
-            mMat.SetVector("ps", new Vector4(1.0f / src.width, 1.0f / src.height));
-            
             Graphics.Blit(src, dest, mMat);
         }
     }

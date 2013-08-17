@@ -51,7 +51,10 @@ namespace M8.ImageEffects {
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest) {
-            if(!CheckResources()) {
+#if UNITY_EDITOR
+            CheckResources();
+#endif
+            if(!isSupported) {
                 Graphics.Blit(src, dest);
                 return;
             }

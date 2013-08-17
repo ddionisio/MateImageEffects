@@ -20,7 +20,7 @@ namespace M8.ImageEffects {
         public float scale = 1.0f;
         public int downSample = 4;
 
-        private Material mMat;
+        protected Material mMat;
 
         public override bool CheckResources() {
             CheckSupport(false);
@@ -32,15 +32,22 @@ namespace M8.ImageEffects {
             return isSupported;
         }
 
-        protected virtual void DoRender(RenderTexture src, RenderTexture dest, Material mat) {
+        protected virtual void DoRender(RenderTexture src, RenderTexture dest) {
             Graphics.Blit(src, dest);
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest) {
+#if UNITY_EDITOR
             if(!CheckResources()) {
                 Graphics.Blit(src, dest);
                 return;
             }
+#else
+            if(!isSupported) {
+                Graphics.Blit(src, dest);
+                return;
+            }
+#endif
 
             int w = src.width, h = src.height;
 
@@ -70,12 +77,12 @@ namespace M8.ImageEffects {
 
                 Graphics.Blit(src, buffer);
 
-                DoRender(buffer, dest, mMat);
+                DoRender(buffer, dest);
 
                 RenderTexture.ReleaseTemporary(buffer);
             }
             else {
-                DoRender(src, dest, mMat);
+                DoRender(src, dest);
             }
         }
     }
