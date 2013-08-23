@@ -9,21 +9,54 @@ namespace M8.ImageEffects {
         public Shader shader;
 
         [SerializeField]
-        float amplitudeX = 1.0f;
+        Vector2 _amplitude; //usu. in fraction
+
         [SerializeField]
-        float amplitudeY = 1.0f;
+        Vector2 _speed; //degree per sec
+
         [SerializeField]
-        float speedX; //degree per sec
-        [SerializeField]
-        float speedY; //degree per sec
-        [SerializeField]
-        float rangeX = 1.0f; //
-        [SerializeField]
-        float rangeY = 1.0f; //rev per pixel
+        Vector2 _range; //
 
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
 
         private Material mMat;
+
+        public Vector2 range {
+            get { return _range; }
+            set {
+                if(mMat == null) CheckResources();
+                if(isSupported) {
+                    _range = value;
+
+                    Vector4 r = new Vector4(
+                    _range.x == 0.0f ? 0.0f : (2.0f * Mathf.PI) / _range.x,
+                    _range.y == 0.0f ? 0.0f : (2.0f * Mathf.PI) / _range.y);
+                    mMat.SetVector("range", r);
+                }
+            }
+        }
+
+        public Vector2 speed {
+            get { return _speed; }
+            set {
+                if(mMat == null) CheckResources();
+                if(isSupported) {
+                    _speed = value;
+                    mMat.SetVector("speed", new Vector4(_speed.x * Mathf.Deg2Rad, _speed.y * Mathf.Deg2Rad));
+                }
+            }
+        }
+
+        public Vector2 amplitude {
+            get { return _amplitude; }
+            set {
+                if(mMat == null) CheckResources();
+                if(isSupported) {
+                    _amplitude = value;
+                    mMat.SetVector("amplitude", _amplitude);
+                }
+            }
+        }
 
         public override bool CheckResources() {
             CheckSupport(false);
@@ -33,25 +66,9 @@ namespace M8.ImageEffects {
                 ReportAutoDisable();
             }
             else {
-                mMat.SetFloat("amplitudeX", amplitudeX);
-                mMat.SetFloat("amplitudeY", amplitudeY);
-
-                if(rangeX != 0.0f) {
-                    mMat.SetFloat("rangeX", (2.0f * Mathf.PI) / rangeX);
-                }
-                else {
-                    mMat.SetFloat("rangeX", 0.0f);
-                }
-
-                if(rangeY != 0.0f) {
-                    mMat.SetFloat("rangeY", (2.0f * Mathf.PI) / rangeY);
-                }
-                else {
-                    mMat.SetFloat("rangeY", 0.0f);
-                }
-
-                mMat.SetFloat("speedX", speedX * Mathf.Deg2Rad);
-                mMat.SetFloat("speedY", speedY * Mathf.Deg2Rad);
+                amplitude = _amplitude;
+                speed = _speed;
+                range = _range;
             }
 
             return isSupported;
@@ -67,7 +84,7 @@ namespace M8.ImageEffects {
             }
 
             src.wrapMode = wrapMode;
-                        
+
             Graphics.Blit(src, dest, mMat);
         }
     }

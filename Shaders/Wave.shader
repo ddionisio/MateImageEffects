@@ -13,12 +13,9 @@ Shader "Hidden/Wave" {
 	};
 	
 	sampler2D _MainTex;
-	float amplitudeX;
-	float amplitudeY;
-	float speedX;
-	float speedY;
-	float rangeX; //
-	float rangeY; //rev per pixel
+	float2 amplitude; //strength of wave, usu. in fraction
+	float2 speed; //degree per second
+	float2 range; //rev per pixel
 
 	v2f vert( appdata_img v ) 
 	{
@@ -32,8 +29,8 @@ Shader "Hidden/Wave" {
 	{
 		//0.017453292
 		float2 pos = half2(
-			i.uv.x + sin(i.uv.y*rangeY + speedX*_Time.y)*amplitudeX,
-			i.uv.y + sin(i.uv.x*rangeX + speedY*_Time.y)*amplitudeY);
+			i.uv.x + sin(i.uv.y*range.y + speed.x*_Time.y)*amplitude.x,
+			i.uv.y + sin(i.uv.x*range.x + speed.y*_Time.y)*amplitude.y);
 		
 		return tex2D(_MainTex, pos);
 	}
