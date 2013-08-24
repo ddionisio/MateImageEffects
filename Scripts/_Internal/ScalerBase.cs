@@ -19,6 +19,8 @@ namespace M8.ImageEffects {
         public Vector2 resolution = new Vector2(320, 180); //default for 16:9 resolution
         public float scale = 1.0f;
         public int downSample = 4;
+        public FilterMode filterDown = FilterMode.Bilinear;
+        public FilterMode filter = FilterMode.Point;
 
         protected Material mMat;
 
@@ -75,8 +77,10 @@ namespace M8.ImageEffects {
             if(w != src.width || h != src.height) {
                 RenderTexture buffer = RenderTexture.GetTemporary(w, h, 0);
 
+                src.filterMode = filterDown;
                 Graphics.Blit(src, buffer);
 
+                buffer.filterMode = filter;
                 DoRender(buffer, dest);
 
                 RenderTexture.ReleaseTemporary(buffer);
