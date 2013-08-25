@@ -4,7 +4,7 @@ using System.Collections;
 namespace M8.ImageEffects {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("M8/Image Effects/Wave")]
+    [AddComponentMenu("M8/Image Effects/WaveRGB")]
     public class WaveRGB : PostEffectsBase {
         public Shader shader;
 
