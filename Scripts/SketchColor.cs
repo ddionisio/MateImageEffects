@@ -10,6 +10,8 @@ namespace M8.ImageEffects {
 
         [SerializeField]
         Color paper = new Color(0.83f, 0.79f, 0.63f);
+        [SerializeField]
+        float threshold = 1.25f;
 
         private Material mMat;
 
@@ -21,6 +23,7 @@ namespace M8.ImageEffects {
                 ReportAutoDisable();
             else {
                 mMat.SetColor("pap", paper);
+                mMat.SetFloat("threshold", threshold);
             }
 
             return isSupported;

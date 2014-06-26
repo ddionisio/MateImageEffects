@@ -47,6 +47,7 @@ Shader "Hidden/SketchColor" {
 	
 	float2 ps; //size of one texel = (1.0/texture.width, 1.0/texture.height)
 	half3 pap = half3(0.83, 0.79, 0.63);
+    half threshold = 1.25;
 	
 	VERTEX_STUFF0 vert( appdata_img v ) 
 	{
@@ -91,7 +92,7 @@ Shader "Hidden/SketchColor" {
 	    half d = 0.55*(d1+d2+hl+vl)/(dot(c11+c10+c02+c22,dt)+0.3); 
 	    d +=  0.5*pow(d,0.5);
 	    c11 *= (1.0-0.6*d); d+=0.1;
-	    d = pow(d,1.25-1.25*min(2.0*d,1.0));
+	    d = pow(d,threshold-threshold*min(2.0*d,1.0));
 	    return half4 (d*c11 + (1.1-d)*pap,1);
 	}
 	ENDCG 
