@@ -8,9 +8,6 @@ namespace M8.ImageEffects {
     public class GS4xHqFilter : ScalerBase {
 
         protected override void DoRender(RenderTexture src, RenderTexture dest) {
-            mMat.SetFloat("psx", 1.0f / src.width);
-            mMat.SetFloat("psy", 1.0f / src.height);
-
             Graphics.Blit(src, dest, mMat);
         }
     }

@@ -38,8 +38,6 @@ namespace M8.ImageEffects {
                 return;
             }
 
-            mMat.SetVector("ps", new Vector4(1.0f / src.width, 1.0f / src.height));
-            
             Graphics.Blit(src, dest, mMat);
         }
     }

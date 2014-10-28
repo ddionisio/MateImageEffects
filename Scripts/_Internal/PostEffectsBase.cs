@@ -8,7 +8,7 @@ namespace M8.ImageEffects {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
     [AddComponentMenu("")]
-    public class PostEffectsBase : MonoBehaviour {
+    public abstract class PostEffectsBase : MonoBehaviour {
         protected bool supportHDRTextures = true;
         protected bool supportDX11 = false;
         protected bool isSupported = true;
@@ -64,10 +64,7 @@ namespace M8.ImageEffects {
             return CheckSupport(false);
         }
 
-        public virtual bool CheckResources() {
-            Debug.LogWarning("CheckResources () for " + this.ToString() + " should be overwritten.");
-            return isSupported;
-        }
+        public abstract bool CheckResources();
 
         public bool CheckSupport(bool needDepth) {
             isSupported = true;

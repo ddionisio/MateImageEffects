@@ -23,11 +23,11 @@ Shader "Hidden/DotBloom" {
 	};
 	
 	sampler2D _MainTex;
+	uniform float4 _MainTex_TexelSize;
 	
 	float gamma = 2.4;
 	float shine = 0.05;
 	float blend = 0.65;
-	float4 srcSize; //(width,height,1/width,1/height)
 
 	float dist(float2 coord, float2 source)
     {
@@ -56,8 +56,8 @@ Shader "Hidden/DotBloom" {
 		v2f o;
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = v.texcoord.xy;
-		o.pixel_no = v.texcoord * srcSize.xy;
-		o.pixel_s = srcSize.zw;
+		o.pixel_no = v.texcoord * _MainTex_TexelSize.zw;
+		o.pixel_s = _MainTex_TexelSize.xy;
 		return o;
 	} 
 	

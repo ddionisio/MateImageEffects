@@ -44,8 +44,8 @@ Shader "Hidden/Sketch" {
 	};
 	
 	sampler2D _MainTex;
+	uniform float4 _MainTex_TexelSize;
 	
-	float2 ps; //size of one texel = (1.0/texture.width, 1.0/texture.height)
 	float3 pap = float3(0.82, 0.77, 0.61);
 	float3 ink = float3(0.28, 0.32, 0.32);
 	
@@ -53,8 +53,8 @@ Shader "Hidden/Sketch" {
 	{
 		VERTEX_STUFF3 o;
 		
-		float dx = ps.x*0.5;
-	    float dy = ps.y*0.5;
+		float dx = _MainTex_TexelSize.x*0.5;
+	    float dy = _MainTex_TexelSize.y*0.5;
 		
 		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.C = v.texcoord.xy;

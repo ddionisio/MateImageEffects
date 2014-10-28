@@ -9,7 +9,7 @@ namespace M8.ImageEffects {
         public float gamma = 2.4f;
         public float shine = 0.05f;
         public float blend = 0.65f;
-        public float tileScale = 1.0f;
+        //public float tileScale = 1.0f;
 
         public override bool CheckResources() {
             bool ret = base.CheckResources();
@@ -24,8 +24,6 @@ namespace M8.ImageEffects {
 
 
         protected override void DoRender(RenderTexture src, RenderTexture dest) {
-            float w = src.width * tileScale, h = src.height * tileScale;
-            mMat.SetVector("srcSize", new Vector4(w, h, 1.0f / w, 1.0f / h));
 
             Graphics.Blit(src, dest, mMat);
         }

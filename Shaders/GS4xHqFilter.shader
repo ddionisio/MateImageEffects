@@ -73,18 +73,16 @@ Shader "Hidden/GS4xHqFilter" {
 	};
 	
 	sampler2D _MainTex;
-	
-	float psx = 1.0; //size of one texel width = 1.0/texture.width
-	float psy = 1.0; //size of one texel height = 1.0/texture.height
+	uniform float4 _MainTex_TexelSize;
 	
 	VERTEX_STUFF4 vert( appdata_img v ) 
 	{
 		VERTEX_STUFF4 o;
 		
-		float dx = psx*0.50;
-	    float dy = psy*0.50;
-	    float sx = psx*0.25;
-	    float sy = psy*0.25;
+		float dx = _MainTex_TexelSize.x*0.50;
+	    float dy = _MainTex_TexelSize.y*0.50;
+	    float sx = _MainTex_TexelSize.x*0.25;
+	    float sy = _MainTex_TexelSize.y*0.25;
 
 	    o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
 	    o.CT = v.texcoord.xy;

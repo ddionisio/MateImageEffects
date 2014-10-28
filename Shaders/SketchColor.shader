@@ -44,8 +44,7 @@ Shader "Hidden/SketchColor" {
 	};
 	
 	sampler2D _MainTex;
-	
-	float2 ps; //size of one texel = (1.0/texture.width, 1.0/texture.height)
+	uniform float4 _MainTex_TexelSize;
 	half3 pap = half3(0.83, 0.79, 0.63);
     half threshold = 1.25;
 	
@@ -53,8 +52,8 @@ Shader "Hidden/SketchColor" {
 	{
 		VERTEX_STUFF0 o;
 		
-		float dx = ps.x*0.5;
-	    float dy = ps.y*0.5;
+		float dx = _MainTex_TexelSize.x*0.5;
+	    float dy = _MainTex_TexelSize.y*0.5;
 		
 		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.CT = v.texcoord.xy;

@@ -13,12 +13,12 @@
 	};
 	
 	sampler2D _MainTex;
+	uniform float4 _MainTex_TexelSize;
 	float frequency;
 	float4 rot;
 	
 	float uScale;
 	float uYrot;
-	float4 srcSize; //(width,height,1/width,1/height)
 	
 	v2f vert( appdata_img v ) 
 	{
@@ -62,7 +62,7 @@
 	{
 		float2 st = i.uv;
 		
-		float3 texcolor = texture2D_bilinear(_MainTex, st, srcSize.xy, srcSize.zw).xyz;
+		float3 texcolor = texture2D_bilinear(_MainTex, st, _MainTex_TexelSize.zw, _MainTex_TexelSize.xy).xyz;
 		
 		//TODO: noise
 		float n = 0;
