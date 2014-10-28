@@ -18,14 +18,25 @@
 	
 	half4 lineColor;
 	half4 paperColor;
-	half fill;
 	half lineDist;//10
 	half lineThickness; //1
 	half lumThreshold1; //1
 	half lumThreshold2; //0.7
 	half lumThreshold3; //0.5
 	half lumThreshold4; //0.3
-	half lumThreshold5; //0
+	
+	half lineStrength1; //1
+	half lineStrength2; //0.7
+	half lineStrength3; //0.5
+	half lineStrength4; //0.3
+	
+	float d; //1
+	
+	half lookup(float2 p, float dx, float dy) {
+		float2 uv = (p.xy + float2(dx*d, dy*d)) / _ScreenParams.xy;
+		float4 c = tex2D(_MainTex, uv);
+		return c.r*0.2126 + c.g*0.7152 + c.b*0.0722;
+	}
 	
 	half mod(half x, half y) {
 		return x - y*floor(x/y);
@@ -46,29 +57,53 @@
 		half3 tc = tex2D(_MainTex, i.uv).rgb;
 		
 		half lum = tc.r*0.2126 + tc.g*0.7152 + tc.b*0.0722;
-		tc = half3(1,1,1);
-		half ld2 = lineDist*2;
+		
+		half hld = lineDist*0.5;
 		float2 pix = i.screenPos;
+		half linePixel = 0;
 		
 		if(lum < lumThreshold1) {
-			if(mod(pix.x + pix.y, 10) <= 1)
-				tc = half4(lerp(tc, lineColor.rgb, lineColor.a), 1);
+			if(mod(pix.x + pix.y, lineDist) <= lineThickness)
+				linePixel = lineStrength1;
 		}
 		if(lum < lumThreshold2) {
-			if(mod(pix.x - pix.y, 10) <= 1)
-				tc = half4(lerp(tc, lineColor.rgb, lineColor.a), 1);
+			if(mod(pix.x - pix.y, lineDist) <= lineThickness)
+				linePixel = lineStrength2;
 		}
 		if(lum < lumThreshold3) {
-			if(mod(pix.x + pix.y - 5, 10) <= 1)
-				tc = half4(lerp(tc, lineColor.rgb, lineColor.a), 1);
+			if(mod(pix.x + pix.y - hld, lineDist) <= lineThickness)
+				linePixel = lineStrength3;
 		}
 		if(lum < lumThreshold4) {
-			if(mod(pix.x - pix.y - 5, 10) <= 1)
-				tc = half4(lerp(tc, lineColor.rgb, lineColor.a), 1);
+			if(mod(pix.x - pix.y - hld, lineDist) <= lineThickness)
+				linePixel = lineStrength4;
 		}
 		
+		//sobel edge detect
+		half gx = 0;
+		gx += -1 * lookup(pix, -1, -1);
+		gx += -2 * lookup(pix, -1,  0);
+		gx += -1 * lookup(pix, -1,  1);
+		gx +=  1 * lookup(pix,  1, -1);
+		gx +=  2 * lookup(pix,  1,  0);
+		gx +=  1 * lookup(pix,  1,  1);
 		
-		return half4(tc,1);
+		half gy = 0;
+		gy += -1 * lookup(pix, -1, -1);
+		gy += -2 * lookup(pix,  0, -1);
+		gy += -1 * lookup(pix,  1, -1);
+		gy +=  1 * lookup(pix, -1,  1);
+		gy +=  2 * lookup(pix,  0,  1);
+		gy +=  1 * lookup(pix,  1,  1);
+		
+		half g = gx*gx + gy*gy;
+		linePixel = min(linePixel+g, 1);
+		
+		half3 lc = lerp(tc, lineColor.rgb, lineColor.a);
+		half3 pc = lerp(tc, paperColor.rgb, paperColor.a);
+		half4 clr = half4(lerp(pc, lc, linePixel), 1);
+		
+		return clr;
 	}
 
 	ENDCG 
