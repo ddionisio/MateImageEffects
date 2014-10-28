@@ -57,7 +57,7 @@ Shader "Hidden/DotBloom" {
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = v.texcoord.xy;
 		o.pixel_no = v.texcoord * _MainTex_TexelSize.zw;
-		o.pixel_s = _MainTex_TexelSize.xy;
+		o.pixel_s = _MainTex_TexelSize.xx;
 		return o;
 	} 
 	
