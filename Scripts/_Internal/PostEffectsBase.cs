@@ -81,8 +81,11 @@ namespace M8.ImageEffects {
                 return false;
             }
 
-            if(needDepth)
-                camera.depthTextureMode |= DepthTextureMode.Depth;
+            if(needDepth) {
+                Camera cam = GetComponent<Camera>();
+                if(cam)
+                    cam.depthTextureMode |= DepthTextureMode.Depth;
+            }
 
             return true;
         }
