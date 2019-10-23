@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // https://www.assetstore.unity3d.com/#/content/6296
 // By Anamaria Todor
 Shader "M8/Translucency/WaterBlur" {
@@ -50,7 +52,7 @@ v2f vert(data i){
 
     v2f o;
 
-    o.position = mul(UNITY_MATRIX_MVP, i.vertex);
+    o.position = UnityObjectToClipPos(i.vertex);
 
     o.screenPos = ComputeGrabScreenPos(o.position);
 

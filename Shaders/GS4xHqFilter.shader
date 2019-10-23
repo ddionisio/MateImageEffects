@@ -1,4 +1,6 @@
-﻿/*
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+/*
 
    Copyright (C) 2005 guest(r) - guest.r@gmail.com
 
@@ -84,7 +86,7 @@ Shader "Hidden/GS4xHqFilter" {
 	    float sx = _MainTex_TexelSize.x*0.25;
 	    float sy = _MainTex_TexelSize.y*0.25;
 
-	    o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
+	    o.coord = UnityObjectToClipPos(v.vertex);
 	    o.CT = v.texcoord.xy;
 
 	    o.t1 = float4(v.texcoord.xy,v.texcoord.xy) + float4(-dx,-dy, dx,-dy); // outer diag. texels

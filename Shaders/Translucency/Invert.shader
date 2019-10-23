@@ -1,4 +1,6 @@
-﻿Shader "M8/Translucency/Invert" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "M8/Translucency/Invert" {
     Properties {
 	}
 	
@@ -32,7 +34,7 @@
 
 			 v2f vert(data i) {
 			    v2f o;
-			    o.position = mul(UNITY_MATRIX_MVP, i.vertex);
+			    o.position = UnityObjectToClipPos(i.vertex);
 			    o.projPos = ComputeGrabScreenPos(o.position);
 			    return o;
 			}

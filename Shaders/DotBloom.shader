@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 /*
  *    Dot 'n bloom shader
  *    Author: Themaister
@@ -54,7 +56,7 @@ Shader "Hidden/DotBloom" {
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = v.texcoord.xy;
 		o.pixel_no = v.texcoord * _MainTex_TexelSize.zw;
 		o.pixel_s = _MainTex_TexelSize.xx;

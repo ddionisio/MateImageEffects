@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 /*
    Downsamples to 16 colors using quantization.
    Uses 4-bit RGBI values for an "EGA"/"Tandy" look
@@ -104,7 +106,7 @@ Shader "Hidden/EGAFilter" {
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = v.texcoord.xy;
 		return o;
 	} 

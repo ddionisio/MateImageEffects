@@ -1,4 +1,6 @@
-﻿/*
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+/*
    Copyright (C) 2006 guest(r) - guest.r@gmail.com
 
    This program is free software; you can redistribute it and/or
@@ -56,7 +58,7 @@ Shader "Hidden/SketchHard" {
 		float dx = _MainTex_TexelSize.x*0.5;
 	    float dy = _MainTex_TexelSize.y*0.5;
 		
-		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.coord = UnityObjectToClipPos(v.vertex);
 		o.C = v.texcoord.xy;
 		o.L = v.texcoord.xy + float2(-dx, 0);
 		o.R = v.texcoord.xy + float2( dx, 0);

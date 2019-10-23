@@ -1,4 +1,6 @@
-﻿Shader "Hidden/CMYKHalftone2" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/CMYKHalftone2" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
 	}
@@ -73,7 +75,7 @@
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = v.texcoord.xy;
 		float4 sp = ComputeScreenPos(o.pos);
 		o.screenPos = _ScreenParams.xy*(sp.xy/sp.w)-_ScreenParams*0.5;

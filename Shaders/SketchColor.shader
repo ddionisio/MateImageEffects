@@ -1,4 +1,6 @@
-﻿/*
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+/*
 
    Copyright (C) 2006 guest(r) - guest.r@gmail.com
 
@@ -55,7 +57,7 @@ Shader "Hidden/SketchColor" {
 		float dx = _MainTex_TexelSize.x*0.5;
 	    float dy = _MainTex_TexelSize.y*0.5;
 		
-		o.coord = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.coord = UnityObjectToClipPos(v.vertex);
 		o.CT = v.texcoord.xy;
 		o.t1.xy = v.texcoord.xy + float2(-dx, 0);
 		o.t2.xy = v.texcoord.xy + float2( dx, 0);
